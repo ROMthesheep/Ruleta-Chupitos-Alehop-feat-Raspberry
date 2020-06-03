@@ -109,7 +109,7 @@ function prepdone() {
   document.getElementById("prep").classList.toggle("d-none");
   document.getElementById("botones").classList.toggle("d-none");
 
-  for (let index = 0; index < 16; index++) {
+  for (let index = 0; index < 17; index++) {
     socket.emit("light",[index,1]);
   }
 }
@@ -1131,7 +1131,7 @@ function reset(modo) {
     counter = 0;
   }
 
-  for (let index = 0; index < 16; index++) {
+  for (let index = 0; index < 17; index++) {
     socket.emit("light",[index,0]);
   }
 

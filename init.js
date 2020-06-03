@@ -33,23 +33,22 @@ server.listen(80, function () {
 // tema giop
 
 var LED = new Gpio(4, "out"); //use GPIO pin 4 as output
-
-var pushButton = new Gpio(17, "in", "both"); //use GPIO pin 17 as input, and 'both' button presses, and releases should be handled
-const VASO1 = new Gpio(26, "in", "both");
-const VASO2 = new Gpio(19, "in", "both");
-const VASO3 = new Gpio(13, "in", "both");
-const VASO4 = new Gpio(6, "in", "both");
-const VASO5 = new Gpio(5, "in", "both");
-const VASO6 = new Gpio(11, "in", "both");
-const VASO7 = new Gpio(9, "in", "both");
-const VASO8 = new Gpio(10, "in", "both");
-const VASO9 = new Gpio(21, "in", "both");
-const VASO10 = new Gpio(20, "in", "both");
-const VASO12 = new Gpio(16, "in", "both");
-const VASO13 = new Gpio(12, "in", "both");
-const VASO14 = new Gpio(7, "in", "both");
-const VASO15 = new Gpio(8, "in", "both");
-const VASO16 = new Gpio(25, "in", "both");
+const VASO1 = new Gpio(26, "out");
+const VASO2 = new Gpio(19, "out");
+const VASO3 = new Gpio(13, "out");
+const VASO4 = new Gpio(6, "out");
+const VASO5 = new Gpio(5, "out");
+const VASO6 = new Gpio(11, "out");
+const VASO7 = new Gpio(9, "out");
+const VASO8 = new Gpio(10, "out");
+const VASO9 = new Gpio(21, "out");
+const VASO10 = new Gpio(20, "out");
+const VASO11 = new Gpio(16, "out");
+const VASO12 = new Gpio(12, "out");
+const VASO13 = new Gpio(7, "out");
+const VASO14 = new Gpio(8, "out");
+const VASO15 = new Gpio(25, "out");
+const VASO16 = new Gpio(24, "out");
 
 var vasos = [
   VASO1,
@@ -92,54 +91,57 @@ io.sockets.on("connection", function (socket) {
 
     // vasos[data[0]-1].writeSync(data[1]) esto no se xq no va pero seria la clave
 
+    console.log(data);
+    
+
     switch (data[0]) {
       case 1:
-        LED.writeSync(data[1]);
+        VASO1.writeSync(data[1]);
         break;
       case 2:
-        LED.writeSync(data[1]);
+        VASO2.writeSync(data[1]);
         break;
       case 3:
-        LED.writeSync(data[1]);
+        VASO3.writeSync(data[1]);
         break;
       case 4:
-        LED.writeSync(data[1]);
+        VASO4.writeSync(data[1]);
         break;
       case 5:
-        LED.writeSync(data[1]);
+        VASO5.writeSync(data[1]);
         break;
       case 6:
-        LED.writeSync(data[1]);
+        VASO6.writeSync(data[1]);
         break;
       case 7:
-        LED.writeSync(data[1]);
+        VASO7.writeSync(data[1]);
         break;
       case 8:
-        LED.writeSync(data[1]);
+        VASO8.writeSync(data[1]);
         break;
       case 9:
-        LED.writeSync(data[1]);
+        VASO9.writeSync(data[1]);
         break;
       case 10:
-        LED.writeSync(data[1]);
+        VASO10.writeSync(data[1]);
         break;
       case 11:
-        LED.writeSync(data[1]);
+        VASO11.writeSync(data[1]);
         break;
       case 12:
-        LED.writeSync(data[1]);
+        VASO12.writeSync(data[1]);
         break;
       case 13:
-        LED.writeSync(data[1]);
+        VASO13.writeSync(data[1]);
         break;
       case 14:
-        LED.writeSync(data[1]);
+        VASO14.writeSync(data[1]);
         break;
       case 15:
-        LED.writeSync(data[1]);
+        VASO15.writeSync(data[1]);
         break;
       case 16:
-        LED.writeSync(data[1]);
+        VASO16.writeSync(data[1]);
         break;
 
       default:
