@@ -11,10 +11,8 @@
 </head>
 
 <body>
-  <h1>Control LED light</h1>
-  <p><input type="checkbox" id="light"></p>
   <div class="jumbotron">
-    <h1 class="display-4">Hello, subnormal!</h1>
+    <h1 class="display-4">Hello, subnormal! 🐑</h1>
     <p class="lead">Bienvenido a los chupitos de la oveja, pon todos los vasitos vacios en las posiciones y pulsa el
       boton!</p>
     <hr class="my-4">
@@ -39,7 +37,7 @@
 
       <div id="menu" class="d-none">
         <h3 id="retoOutcome" class="d-none"></h3>
-        <h1>¿Qué eliges?</h1>
+        <h1>Bebete el chupito y...<br>¿Qué eliges?</h1>
         <hr>
         <button type="button" onclick="elBoton()" class="btn btn-info mr-3">El boton</button>
         <button type="button" onclick="verdad()" class="btn btn-info mr-3">Verdad</button>
@@ -60,13 +58,14 @@
         <hr>
       </div>
       <div id="elBoton" class="d-none">
-        <h2 id="elBoton"></h2>
-        <button type="button" class="btn btn-danger">Pulsaria el boton</button>
-        <button type="button" onclick="" class="btn btn-warning">No pulsaria el boton</button>
+        <h2 id="elBotonText"></h2>
+        <button type="button" onclick="objetivoCumplido(4)" class="btn btn-danger">Pulsaria el boton</button>
+        <button type="button" onclick="objetivoCumplido(4)" class="btn btn-warning">No pulsaria el boton</button>
         <hr>
       </div>
       <div id="sorpresa" class="d-none">
-        <h1>fiehta</h1>
+        <h1>Evento especial!</h1>
+        <h3 id="evento"></h3>
         <button type="button" onclick="objetivoCumplido(3)" class="btn btn-warning">tirar de nuevo</button>
       </div>
     </section>
@@ -127,8 +126,11 @@
 
   </article>
   <div id="gameover" class="container-lg d-none">
-    <button type="button" onclick="reset()" class="btn btn-danger">
+    <button type="button" onclick="reset(1)" class="btn btn-danger">
       Reset game
+    </button>
+    <button type="button" onclick="reset(2)" class="btn btn-info">
+      Otra ronda! 🥃
     </button>
   </div>
 

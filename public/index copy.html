@@ -12,7 +12,7 @@
 
 <body>
   <h1>Control LED light</h1>
-<p><input type="checkbox" id="light"></p>
+  <p><input type="checkbox" id="light"></p>
   <div class="jumbotron">
     <h1 class="display-4">Hello, subnormal!</h1>
     <p class="lead">Bienvenido a los chupitos de la oveja, pon todos los vasitos vacios en las posiciones y pulsa el
@@ -24,24 +24,24 @@
   <article id="juego" class="container-lg ">
     <section id="gamespace" class="mx-auto text-center">
       <div id="prep" class="d-none">
-          <p>¿Cuantos tipos de licor tienes?</p>
-          <select class="form-control col-lg-1 align-self-center mx-auto" oninput="actualizarNumero()" id="numeroliq">
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-          </select>
-          <div id="ordenes">
-            <p id="config"></p>
-          </div>
-          <a class="btn btn-primary btn-lg" onclick="prepdone()" role="button">Listo!</a>
-          <hr>
+        <p>¿Cuantos tipos de licor tienes?</p>
+        <select class="form-control col-lg-1 align-self-center mx-auto" oninput="actualizarNumero()" id="numeroliq">
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+        <div id="ordenes">
+          <p id="config"></p>
+        </div>
+        <a class="btn btn-primary btn-lg" onclick="prepdone()" role="button">Listo!</a>
+        <hr>
       </div>
-      
+
       <div id="menu" class="d-none">
         <h3 id="retoOutcome" class="d-none"></h3>
         <h1>¿Qué eliges?</h1>
         <hr>
-        <button type="button" onclick="beber()" class="btn btn-info mr-3">Beber</button>
+        <button type="button" onclick="elBoton()" class="btn btn-info mr-3">El boton</button>
         <button type="button" onclick="verdad()" class="btn btn-info mr-3">Verdad</button>
         <button type="button" onclick="reto()" class="btn btn-info ">Reto de jugador</button>
         <hr>
@@ -55,8 +55,14 @@
       </div>
       <div id="reto" class="d-none">
         <h2 id="elreto"></h2>
-        <button type="button" class="btn btn-warning">Illo hermano no se me ocure na</button>
-        <button type="button" onclick="objetivoCumplido(2)" class="btn btn-warning">tirar de nuevo</button>
+        <button type="button" onclick="objetivoCumplido(4)" class="btn btn-warning">Illo hermano no se me ocure na</button>
+        <button type="button" onclick="objetivoCumplido(4)" class="btn btn-warning">tirar de nuevo</button>
+        <hr>
+      </div>
+      <div id="elBoton" class="d-none">
+        <h2 id="elBotonText"></h2>
+        <button type="button" onclick="objetivoCumplido(4)" class="btn btn-danger">Pulsaria el boton</button>
+        <button type="button" onclick="objetivoCumplido(4)" class="btn btn-warning">No pulsaria el boton</button>
         <hr>
       </div>
       <div id="sorpresa" class="d-none">
@@ -67,37 +73,53 @@
     <section id="botones" class="mx-auto text-center d-none">
 
       <button type="button" id="1"
-        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(1)">33 4</button>
+        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(1)">33
+        4</button>
       <button type="button" id="2"
-        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(2)">27 25</button>
+        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(2)">27
+        25</button>
       <button type="button" id="3"
-        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(3)">29 8</button>
+        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(3)">29
+        8</button>
       <button type="button" id="4"
-        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(4)">12 19</button>
+        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(4)">12
+        19</button>
       <button type="button" id="5"
-        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(5)">24 13 10</button>
+        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(5)">24 13
+        10</button>
       <button type="button" id="6"
-        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(6)">9 30</button>
+        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(6)">9
+        30</button>
       <button type="button" id="7"
-        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(7)">22 15</button>
+        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(7)">22
+        15</button>
       <button type="button" id="8"
-        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(8)">7 32</button>
+        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(8)">7
+        32</button>
       <button type="button" id="9"
-        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(9)">31 6</button>
+        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(9)">31
+        6</button>
       <button type="button" id="10"
-        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(10)">16 23 14</button>
+        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(10)">16
+        23 14</button>
       <button type="button" id="11"
-        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(11)">35 2 28</button>
+        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(11)">35 2
+        28</button>
       <button type="button" id="12"
-        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(12)">5 34</button>
+        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(12)">5
+        34</button>
       <button type="button" id="13"
-        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(13)">26 11</button>
+        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(13)">26
+        11</button>
       <button type="button" id="14"
-        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(14)">18 21</button>
+        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(14)">18
+        21</button>
       <button type="button" id="15"
-        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(15)">20 17</button>
+        class="btn btn-dark btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(15)">20
+        17</button>
       <button type="button" id="16"
-        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(16)">3 36 1</button>
+        class="btn btn-danger btn-circle btn-xl mx-auto col-md-4 d-inline align-self-center mt-2" onclick="vaso(16)">3
+        36 1</button>
       <hr>
       <h4>Rondas jugadas:</h4>
       <h3 id="counter"></h3>
@@ -109,6 +131,7 @@
       Reset game
     </button>
   </div>
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

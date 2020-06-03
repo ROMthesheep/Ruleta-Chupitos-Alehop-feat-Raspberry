@@ -1,21 +1,10 @@
-/// LOGICA GPIO
+var estadosVasos = [];
+for (let index = 0; index < 16; index++) {
+  estadosVasos[index] = false;
+}
 
-var socket = io(); //load socket.io-client and connect to the host that serves the page
-window.addEventListener("load", function () {
-  //when page loads
-  var lightbox = document.getElementById("light");
-  lightbox.addEventListener("change", function () {
-    //add event listener for when checkbox changes
-    socket.emit("light", Number(this.checked)); //send button status to server (as 1 or 0)
-  });
-});
-socket.on("light", function (data) {
-  //get button status from client
-  document.getElementById("light").checked = data; //change checkbox according to push button on Raspberry Pi
-  socket.emit("light", data); //send push button status to back to server
-});
+console.log(estadosVasos.length);
 
-////// JUEGO EN SI
 
 var jugando = false;
 var numeroselect = document.getElementById("numeroliq");
@@ -35,6 +24,15 @@ console.log(numeroReto);
 
 var mensajeDeReto = document.getElementById("retoOutcome");
 
+
+
+/// LOGICA GPIO
+
+var socket = io(); //load socket.io-client and connect to the host that serves the page
+
+////// JUEGO EN SI
+
+
 function init() {
   if (jugando == false) {
     jugando = true;
@@ -43,55 +41,6 @@ function init() {
     if (document.getElementById("gameover").classList.contains("d-none")) {
       document.getElementById("gameover").classList.remove("d-none");
     }
-  }
-}
-
-function reset() {
-  jugando = false;
-  sepuedepulsar = true;
-  var botontarget = 0;
-  counter = 0;
-
-  while (botontarget < 16) {
-    botontarget++;
-
-    if (
-      document
-        .getElementById(botontarget)
-        .classList.contains("btn-secondary") &&
-      botontarget % 2 == 0
-    ) {
-      document.getElementById(botontarget).classList.remove("btn-secondary");
-      document.getElementById(botontarget).classList.add("btn-danger");
-    } else if (
-      document
-        .getElementById(botontarget)
-        .classList.contains("btn-secondary") &&
-      botontarget % 2 != 0
-    ) {
-      document.getElementById(botontarget).classList.remove("btn-secondary");
-      document.getElementById(botontarget).classList.add("btn-dark");
-    } else {
-    }
-  }
-  if (!document.getElementById("botones").classList.contains("d-none")) {
-    document.getElementById("botones").classList.add("d-none");
-  }
-
-  if (!document.getElementById("menu").classList.contains("d-none")) {
-    document.getElementById("menu").classList.add("d-none");
-  }
-  if (!document.getElementById("verdad").classList.contains("d-none")) {
-    document.getElementById("verdad").classList.add("d-none");
-  }
-  if (!document.getElementById("reto").classList.contains("d-none")) {
-    document.getElementById("reto").classList.add("d-none");
-  }
-  if (!document.getElementById("gameover").classList.contains("d-none")) {
-    document.getElementById("gameover").classList.add("d-none");
-  }
-  if (!document.getElementById("prep").classList.contains("d-none")) {
-    document.getElementById("prep").classList.add("d-none");
   }
 }
 
@@ -159,14 +108,27 @@ function actualizarNumero() {
 function prepdone() {
   document.getElementById("prep").classList.toggle("d-none");
   document.getElementById("botones").classList.toggle("d-none");
+
+  for (let index = 0; index < 16; index++) {
+    socket.emit("light",[index,1]);
+  }
 }
 
 function vaso(numeroVaso) {
   var eventosorpresa = Math.floor(Math.random() * 100);
-  console.log(eventosorpresa);
+  
+  
+
   if (document.getElementById(numeroVaso).classList.contains("btn-secondary")) {
     // do some stuff
   } else if (sepuedepulsar) {
+
+    socket.emit("light",[numeroVaso,0]);
+
+    estadosVasos[numeroVaso-1]=true;
+    console.log(estadosVasos);
+    // socket.emit("light", estadosVasos);
+
     var vaso = document.getElementById(numeroVaso);
     vaso.classList.remove("btn-dark");
     vaso.classList.remove("btn-danger");
@@ -184,7 +146,7 @@ function vaso(numeroVaso) {
       if (retoTimer[5] > 6) {
         mensajeDeReto.classList.toggle("d-none");
         mensajeDeReto.innerHTML +=
-          "<br>El esclavo ha roto sus cadenas. Eres libre";
+          "<br>El esclavo ha roto sus cadenas. Eres libre.";
         numeroReto[5] = false;
       } else {
         retoTimer[5]++;
@@ -233,7 +195,7 @@ function vaso(numeroVaso) {
     if (numeroReto[17] == true) {
       if (retoTimer[17] > 4) {
         mensajeDeReto.classList.toggle("d-none");
-        mensajeDeReto.innerHTML += "Vistete que no eres mario casas<br>";
+        mensajeDeReto.innerHTML += "Vistete que no eres mario casas.<br>";
         numeroReto[17] = false;
       } else {
         retoTimer[17]++;
@@ -272,7 +234,7 @@ function vaso(numeroVaso) {
     if (numeroReto[29] == true) {
       if (retoTimer[29] > 5) {
         mensajeDeReto.classList.toggle("d-none");
-        mensajeDeReto.innerHTML += "Te han vuelto a crecer los dedos!<br>";
+        mensajeDeReto.innerHTML += "Te han vuelto a crecer los dedos!.<br>";
         numeroReto[29] = false;
       } else {
         retoTimer[29]++;
@@ -314,70 +276,167 @@ function vaso(numeroVaso) {
 
 function elBoton() {
   document.getElementById("menu").classList.toggle("d-none");
-
+  document.getElementById("elBoton").classList.toggle("d-none");
   switch (Math.floor(Math.random() * 40)) {
     case 0:
-      document.getElementById("elBoton").innerHTML = "Tus orgasmos son 1000 veces mas intensos, pero solo puedes tener tres cada año.";
+      document.getElementById("elBotonText").innerHTML =
+        "Tus orgasmos son 1000 veces mas intensos, pero solo puedes tener tres cada año.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "Consigues seducir a la persona de tus sueños, pero jamas podras tener sexo ni intimar con él/ella";
+    case 1:
+      document.getElementById("elBotonText").innerHTML =
+        "Consigues seducir a la persona de tus sueños, pero jamas podras tener sexo ni intimar con él/ella.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "Seras capaz de proteger a los tuyos de cuaqlueir peligro, pero te vuelves un asesino despiadado";
+    case 2:
+      document.getElementById("elBotonText").innerHTML =
+        "Seras capaz de proteger a los tuyos de cuaqlueir peligro, pero te vuelves un asesino despiadado.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "Tienes la oportunidad de estar con la persona mas hermosa que jamas hayas visto, pero es coprofilic@ (excitación sexual a través de las heces)";
+    case 3:
+      document.getElementById("elBotonText").innerHTML =
+        "Tienes la oportunidad de estar con la persona mas hermosa que jamas hayas visto, pero es coprofilic@ (excitación sexual a través de las heces).";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "La persona de tus sueños estara siempre a tu lado, pero te engañara constantemente con otr@s";
+    case 4:
+      document.getElementById("elBotonText").innerHTML =
+        "La persona de tus sueños estara siempre a tu lado, pero te engañara constantemente con otr@s.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "Sabes todos los numeros de la loteria de aqui a 5 años, pero cada año que cobres el premio un jugador de los aqui presentes morira.";
+    case 5:
+      document.getElementById("elBotonText").innerHTML =
+        "Sabes todos los numeros de la loteria de aqui a 5 años, pero cada año que cobres el premio un jugador de los aqui presentes morira.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "Consigues un fisico perfecto, pero tus genitales apestan permanentemente";
+    case 6:
+      document.getElementById("elBotonText").innerHTML =
+        "Consigues un fisico perfecto, pero tus genitales apestan permanentemente.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "Te regalan una casa que cubre todas tus necesidades, pero pierdes un brazo";
+    case 7:
+      document.getElementById("elBotonText").innerHTML =
+        "Te regalan una casa que cubre todas tus necesidades, pero pierdes un brazo.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 8:
+      document.getElementById("elBotonText").innerHTML =
+        "Te conviertes en la persona mas lista de la historia, pero nadie te cree.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 9:
+      document.getElementById("elBotonText").innerHTML =
+        "Puedes materializar cualquier cosa que imagines, pero cada vez que lo haces te asalta un dolor inimagible durante 10 minutos.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 10:
+      document.getElementById("elBotonText").innerHTML =
+        "Te conviertes en un genio, pero todos se convierten en personas con capacidad intelectual reducida.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 11:
+      document.getElementById("elBotonText").innerHTML =
+        "Consigues poderes telequineticos, pero no puedes volver a interactuar con objetos con tus manos.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 12:
+      document.getElementById("elBotonText").innerHTML =
+        "Consigues tu trabajo de ensueño, pero jamas tendras vacaciones.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 13:
+      document.getElementById("elBotonText").innerHTML =
+        "La persona de tus sueños estara siempre a tu lado, pero quiere más a su perro que a ti y pondra su cuidado por encima de ti.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 14:
+      document.getElementById("elBotonText").innerHTML =
+        "Recibes todo lo que deseas, pero el jugador de tu derecha lo pierde todo.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 15:
+      document.getElementById("elBotonText").innerHTML =
+        "Nunca estaras soltero y siempre amaras a tu pareja, pero tu pareja tiene una mania que detestas y no para de hacerla.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 16:
+      document.getElementById("elBotonText").innerHTML =
+        "La comida te sabe 3000 veces mejor, pero solo puedes comer 3 recetas.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 17:
+      document.getElementById("elBotonText").innerHTML =
+        "Puedes ver el futuro, pero cada vez que lo haces olvidas algo de tu pasado.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 18:
+      document.getElementById("elBotonText").innerHTML =
+        "Vives la vida de tus sueños, pero no recuerdas nada de la actual.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 19:
+      document.getElementById("elBotonText").innerHTML =
+        "Todas tus borracheras son la hostia, pero todas tus rescas son terribles.";
       break;
-    case 0:
-      document.getElementById("elBoton").innerHTML = "";
+    case 20:
+      document.getElementById("elBotonText").innerHTML =
+        "Consigues tu coche de ensueño con todos los gastos pagados (mantenimiento, combustible, seguro...), pero jamas puedes lavarlo.";
+      break;
+    case 21:
+      document.getElementById("elBotonText").innerHTML =
+        "Consigues la habilidad de convertirte en tu animal favorito a placer, pero eres subsceptible a todas sus enfermedades.";
+      break;
+    case 22:
+      document.getElementById("elBotonText").innerHTML =
+        "Puedes conseguir tres objetos que desees, pero debes matar a un gato/perro con tus manos desnudas para completar el ritual.";
+      break;
+    case 23:
+      document.getElementById("elBotonText").innerHTML =
+        "Puedes detectar que una persona este interesada en ti, pero todos pueden saber si estas interesado en ellos.";
+      break;
+    case 24:
+      document.getElementById("elBotonText").innerHTML =
+        "Cagas oro valorado en 500 €/k, pero hacerlo te produce un dolor agudo insufrible.";
+      break;
+    case 25:
+      document.getElementById("elBotonText").innerHTML =
+        "Ligas como nadie, no hay quien se te resista, pero eres incapaz de mantener una relacion mas de un año.";
+      break;
+    case 26:
+      document.getElementById("elBotonText").innerHTML =
+        "Vives en tu casa de ensueño, pero tus padres se van contigo.";
+      break;
+    case 27:
+      document.getElementById("elBotonText").innerHTML =
+        "Consigues la pareja de tus sueños, pero su herman@ trata desesperadamente de tener sexo contigo.";
+      break;
+    case 28:
+      document.getElementById("elBotonText").innerHTML =
+        "Nunca mas tendras que comer o dormir, pero toda la comida te sabe a mierda y si decides dormir tendras horribles pesadillas.";
+      break;
+    case 29:
+      document.getElementById("elBotonText").innerHTML =
+        "Puedes volar, pero solo sabes aterrizar estrellandote.";
+      break;
+    case 30:
+      document.getElementById("elBotonText").innerHTML =
+        "Puedes viajar por todo el mundo gratis, pero es en autobus.";
+      break;
+    case 31:
+      document.getElementById("elBotonText").innerHTML =
+        "Te conviertes en dios, pero ves a todos los humanos como bacterias.";
+      break;
+    case 32:
+      document.getElementById("elBotonText").innerHTML =
+        "Consigues un fisico de 10, pero los jugadores a tus lados engordan 25 kilos y saben que es por tu culpa.";
+      break;
+    case 33:
+      document.getElementById("elBotonText").innerHTML =
+        "Tendras y daras los mejores polvos de la historia, pero solo podras hacerlo con los aqui presentes.";
+      break;
+    case 34:
+      document.getElementById("elBotonText").innerHTML =
+        "Tendras la fuerza de un titan, pero oleras como tal.";
+      break;
+    case 35:
+      document.getElementById("elBotonText").innerHTML =
+        "Puedes vivir en tu mundo de fantasi favorito, pero como el villano.";
+      break;
+    case 36:
+      document.getElementById("elBotonText").innerHTML =
+        "Puedes traer a una persona a la vida, pero pierdes 10 años de vida.";
+      break;
+    case 37:
+      document.getElementById("elBotonText").innerHTML =
+        "Tendras dinero infinito, pero no puedes compartir tu riqueza con nadie.";
+      break;
+    case 38:
+      document.getElementById("elBotonText").innerHTML =
+        "Eres todopoderoso, pero solo durante un dia al mes y el resto del mes estas tan cansado que duermes el doble de lo normal.";
+      break;
+    case 39:
+      document.getElementById("elBotonText").innerHTML =
+        "La mayoria de tu cuerpo no envejece, Salvo tu cara y lo hace al doble de velocidad.";
       break;
 
     default:
@@ -385,7 +444,7 @@ function elBoton() {
   }
 
   sepuedepulsar = true;
-  mensajeDeReto.innerHTML = "";
+  mensajeDeReto.innerHTML = ".";
 }
 
 function verdad() {
@@ -396,292 +455,293 @@ function verdad() {
   switch (parseInt(lapregunta)) {
     case 1:
       pregunta.innerHTML =
-        "Cuentanos de que iba el ultimo video porno que has visto";
+        "Cuentanos de que iba el ultimo video porno que has visto.";
       break;
     case 2:
-      pregunta.innerHTML = "¿Alguna vez le has robado dinero a tus padres?";
+      pregunta.innerHTML = "¿Alguna vez le has robado dinero a tus padres?.";
       break;
     case 3:
-      pregunta.innerHTML = "¿Donde es el sitio mas raro donde has tenido sexo?";
+      pregunta.innerHTML =
+        "¿Donde es el sitio mas raro donde has tenido sexo?.";
       break;
     case 4:
-      pregunta.innerHTML = "Cual es tu mayor complejo y por qué";
+      pregunta.innerHTML = "Cual es tu mayor complejo y por qué.";
       break;
     case 4:
-      pregunta.innerHTML = "¿Alguna vez le has robado dinero a tus padres?";
+      pregunta.innerHTML = "¿Alguna vez le has robado dinero a tus padres?.";
       break;
     case 5:
       pregunta.innerHTML =
-        "¿Cual ha sido tu peor experiencia con algun cuerpo de seguridad?";
+        "¿Cual ha sido tu peor experiencia con algun cuerpo de seguridad?.";
       break;
     case 6:
-      pregunta.innerHTML = "¿Cual es el sitio mas raro en el que has meado?";
+      pregunta.innerHTML = "¿Cual es el sitio mas raro en el que has meado?.";
       break;
     case 7:
-      pregunta.innerHTML = "¿Cual es el pedo mas inaporopiado que recuerdas?";
+      pregunta.innerHTML = "¿Cual es el pedo mas inaporopiado que recuerdas?.";
       break;
     case 8:
       pregunta.innerHTML =
-        "¿Que fotos sobre ti nunca desearias que existieran?";
+        "¿Que fotos sobre ti nunca desearias que existieran?.";
       break;
     case 9:
       pregunta.innerHTML =
-        "¿Cual ha sido la conversacion de chat mas lamentable que has tenido?";
+        "¿Cual ha sido la conversacion de chat mas lamentable que has tenido?.";
       break;
     case 10:
       pregunta.innerHTML =
-        "¿Que realmente esperas que tus padres jamas descubran sobre ti?";
+        "¿Que realmente esperas que tus padres jamas descubran sobre ti?.";
       break;
     case 11:
       pregunta.innerHTML =
-        "¿Cambiarias de sexo durante una semana?¿y para siempre?";
+        "¿Cambiarias de sexo durante una semana?¿y para siempre?.";
       break;
     case 12:
       pregunta.innerHTML =
-        "De los presentes,¿Quien crees que seria la peor cita?";
+        "De los presentes,¿Quien crees que seria la peor cita?.";
       break;
     case 13:
       pregunta.innerHTML =
-        "De los presentes, ¿Quien esta en una relacion con alguien que no le pega?";
+        "De los presentes, ¿Quien esta en una relacion con alguien que no le pega?.";
       break;
     case 14:
       pregunta.innerHTML =
-        "¿Que es lo mas estupido que has dicho en la intimidad de pareja?";
+        "¿Que es lo mas estupido que has dicho en la intimidad de pareja?.";
       break;
     case 15:
       pregunta.innerHTML =
-        "Qué prefieres, ¿estar desnudo o vestido pero todos saben en que piensas?";
+        "Qué prefieres, ¿estar desnudo o vestido pero todos saben en que piensas?.";
       break;
     case 16:
-      pregunta.innerHTML = "¿Alguna vez has practicado besando a un espejo?";
+      pregunta.innerHTML = "¿Alguna vez has practicado besando a un espejo?.";
       break;
     case 17:
-      pregunta.innerHTML = "¿Babeas al dormir?";
+      pregunta.innerHTML = "¿Babeas al dormir?.";
       break;
     case 18:
-      pregunta.innerHTML = "Marry, kill, fuck";
+      pregunta.innerHTML = "Marry, kill, fuck.";
       break;
     case 19:
       pregunta.innerHTML =
-        "¿Quien de los aqui presentes te cae peor y por qué?";
+        "¿Quien de los aqui presentes te cae peor y por qué?.";
       break;
     case 20:
       pregunta.innerHTML =
-        "¿Qué es lo que mas te molesta de el jugador de tu derecha?";
+        "¿Qué es lo que mas te molesta de el jugador de tu derecha?.";
       break;
     case 21:
       pregunta.innerHTML =
-        "¿Qué es lo que mas te molesta de el jugador de tu izquierda?";
+        "¿Qué es lo que mas te molesta de el jugador de tu izquierda?.";
       break;
     case 22:
-      pregunta.innerHTML = "¿Alguna vez has probado el cerumen de tus oidos?";
+      pregunta.innerHTML = "¿Alguna vez has probado el cerumen de tus oidos?.";
       break;
     case 23:
-      pregunta.innerHTML = "¿mama o papa?";
+      pregunta.innerHTML = "¿mama o papa?.";
       break;
     case 24:
       pregunta.innerHTML =
-        "¿prefieres ser obeso morbido para siempre o perder tus genitales?";
+        "¿prefieres ser obeso morbido para siempre o perder tus genitales?.";
       break;
     case 25:
       pregunta.innerHTML =
-        "Si tuvieras que ver a todos los presentes desnudos pero pudieras evitar a uno, ¿quien seria?";
+        "Si tuvieras que ver a todos los presentes desnudos pero pudieras evitar a uno, ¿quien seria?.";
       break;
     case 26:
       pregunta.innerHTML =
-        "¿Que harias si supieras que si murieras en las siguientes 24h revivirias al dia siguiente?";
+        "¿Que harias si supieras que si murieras en las siguientes 24h revivirias al dia siguiente?.";
       break;
     case 27:
       pregunta.innerHTML =
-        "Si pudieras cambiar algo de tu pasado, ¿que cambiarias?";
+        "Si pudieras cambiar algo de tu pasado, ¿que cambiarias?.";
       break;
     case 28:
-      pregunta.innerHTML = "lo de la tarta y la polla";
+      pregunta.innerHTML = "lo de la tarta y la polla.";
       break;
     case 29:
-      pregunta.innerHTML = "El juego. Si habeis perdido, bebeis";
+      pregunta.innerHTML = "El juego. Si habeis perdido, bebeis.";
       break;
     case 30:
-      pregunta.innerHTML = "¿Quien es la diva del grupo?";
+      pregunta.innerHTML = "¿Quien es la diva del grupo?.";
       break;
     case 31:
       pregunta.innerHTML =
-        "Si pudieras robar una cualidad fisica de alguno de lso presentes, ¿Cual seria?";
+        "Si pudieras robar una cualidad fisica de alguno de lso presentes, ¿Cual seria?.";
       break;
     case 32:
       pregunta.innerHTML =
-        "Que prefieres, una relacion muy apasionada, una relacion muy poco apasionada o una relacion muy imprevisible";
+        "Que prefieres, una relacion muy apasionada, una relacion muy poco apasionada o una relacion muy imprevisible.";
       break;
     case 33:
-      pregunta.innerHTML = "¿Que es lo que mas te corta el rollo?";
+      pregunta.innerHTML = "¿Que es lo que mas te corta el rollo?.";
       break;
     case 34:
-      pregunta.innerHTML = "¿Que es lo que mas te pone a tono?";
+      pregunta.innerHTML = "¿Que es lo que mas te pone a tono?.";
       break;
     case 35:
       pregunta.innerHTML =
-        "Que ha sido lo mas escandaloso/patetico que has llegado a hacer intentando ligar";
+        "Que ha sido lo mas escandaloso/patetico que has llegado a hacer intentando ligar.";
       break;
     case 36:
-      pregunta.innerHTML = "¿Tienes alguna perforacion oculta?";
+      pregunta.innerHTML = "¿Tienes alguna perforacion oculta?.";
       break;
     case 37:
-      pregunta.innerHTML = "¿tienes algun fetiche?";
+      pregunta.innerHTML = "¿tienes algun fetiche?.";
       break;
     case 38:
-      pregunta.innerHTML = "¿Sueles dormir desnud@?";
+      pregunta.innerHTML = "¿Sueles dormir desnud@?.";
       break;
     case 39:
       pregunta.innerHTML =
-        "¿Cual seria la edad maxima con la que saldrias con alguien?";
+        "¿Cual seria la edad maxima con la que saldrias con alguien?.";
       break;
     case 40:
       pregunta.innerHTML =
-        "¿Que ha sido lo mas borde que has hecho en tu vida?";
+        "¿Que ha sido lo mas borde que has hecho en tu vida?.";
       break;
     case 41:
       pregunta.innerHTML =
-        "¿Cual ha sido la mentira mas cruel que has contado?";
+        "¿Cual ha sido la mentira mas cruel que has contado?.";
       break;
     case 42:
       pregunta.innerHTML =
-        "¿Que es lo mas ridiculo que has hecho estando borracho?";
+        "¿Que es lo mas ridiculo que has hecho estando borracho?.";
       break;
     case 43:
-      pregunta.innerHTML = "¿Como fue la ultima vez que te masturbaste?";
+      pregunta.innerHTML = "¿Como fue la ultima vez que te masturbaste?.";
       break;
     case 44:
       pregunta.innerHTML =
-        "¿Que es lo mas asqueroso que has tenido en tus manos desnudas?";
+        "¿Que es lo mas asqueroso que has tenido en tus manos desnudas?.";
       break;
     case 45:
-      pregunta.innerHTML = "¿Cual es tu placer culpable?";
+      pregunta.innerHTML = "¿Cual es tu placer culpable?.";
       break;
     case 46:
-      pregunta.innerHTML = "¿Has puesto alguna vez los cuernos a alguien?";
+      pregunta.innerHTML = "¿Has puesto alguna vez los cuernos a alguien?.";
       break;
     case 47:
-      pregunta.innerHTML = "¿Como acabo tu anterior relacion?";
+      pregunta.innerHTML = "¿Como acabo tu anterior relacion?.";
       break;
     case 48:
       pregunta.innerHTML =
-        "¿Quien te ha visto desnud@ y ojala nunca hubiera sucedido?";
+        "¿Quien te ha visto desnud@ y ojala nunca hubiera sucedido?.";
       break;
     case 49:
       pregunta.innerHTML =
-        "¿Cual es la mentira mas grande que le has contado a alguno de los presentes?";
+        "¿Cual es la mentira mas grande que le has contado a alguno de los presentes?.";
       break;
     case 50:
-      pregunta.innerHTML = "¿Que ha sido lo mas tonto que te ha hecho llorar?";
+      pregunta.innerHTML = "¿Que ha sido lo mas tonto que te ha hecho llorar?.";
       break;
     case 51:
-      pregunta.innerHTML = "¿A que personaje de Disney te follabas?";
+      pregunta.innerHTML = "¿A que personaje de Disney te follabas?.";
       break;
     case 52:
       pregunta.innerHTML =
-        "¿A quien de los presentes (que nos ea tu pareja) te follabas?";
+        "¿A quien de los presentes (que nos ea tu pareja) te follabas?.";
       break;
     case 53:
-      pregunta.innerHTML = "¿Cual ha sido tu ultima gran decepcion?";
+      pregunta.innerHTML = "¿Cual ha sido tu ultima gran decepcion?.";
       break;
     case 54:
-      pregunta.innerHTML = "¿Cual ha sido tu ultima gran humillacion?";
+      pregunta.innerHTML = "¿Cual ha sido tu ultima gran humillacion?.";
       break;
     case 55:
       pregunta.innerHTML =
-        "¿Con que tema consideras que eres insufrible pero sabes que merece la pena?";
+        "¿Con que tema consideras que eres insufrible pero sabes que merece la pena?.";
       break;
     case 56:
-      pregunta.innerHTML = "¿Que es lo mas importante en la cama?";
+      pregunta.innerHTML = "¿Que es lo mas importante en la cama?.";
       break;
     case 57:
-      pregunta.innerHTML = "¿Cual es tu postira favorita?";
+      pregunta.innerHTML = "¿Cual es tu postira favorita?.";
       break;
     case 58:
-      pregunta.innerHTML = "¿Querrias saber como vas a morir?";
+      pregunta.innerHTML = "¿Querrias saber como vas a morir?.";
       break;
     case 59:
       pregunta.innerHTML =
-        "¿Cual ha sido al forma mas humillamnte/patetica/original que te han dado calabazas?";
+        "¿Cual ha sido al forma mas humillamnte/patetica/original que te han dado calabazas?.";
       break;
     case 60:
       pregunta.innerHTML =
-        "¿Cual ha sido al forma mas humillamnte/patetica/original que has dado calabazas?";
+        "¿Cual ha sido al forma mas humillamnte/patetica/original que has dado calabazas?.";
       break;
     case 61:
-      pregunta.innerHTML = "¿Cual es el cotilleo mas loco que has escuchado?";
+      pregunta.innerHTML = "¿Cual es el cotilleo mas loco que has escuchado?.";
       break;
     case 62:
-      pregunta.innerHTML = "¿cual es tu peor habito?";
+      pregunta.innerHTML = "¿cual es tu peor habito?.";
       break;
     case 63:
       pregunta.innerHTML =
-        "¿Cual ha sido la peor excusa que has dado para evitar hacer algo?";
+        "¿Cual ha sido la peor excusa que has dado para evitar hacer algo?.";
       break;
     case 64:
       pregunta.innerHTML =
-        "¿Cual ha sido la peor excusa que has dado que te dejen hacer algo?";
+        "¿Cual ha sido la peor excusa que has dado que te dejen hacer algo?.";
       break;
     case 65:
-      pregunta.innerHTML = "¿Cual ha sido el beso del que mas te arrepientes?";
+      pregunta.innerHTML = "¿Cual ha sido el beso del que mas te arrepientes?.";
       break;
     case 66:
       pregunta.innerHTML =
-        "Si pudieras elegir entre ser la persona mas feliz del mundo o la mas inteligente, ¿Cual eligirias?";
+        "Si pudieras elegir entre ser la persona mas feliz del mundo o la mas inteligente, ¿Cual eligirias?.";
       break;
     case 67:
-      pregunta.innerHTML = "¿A que te has rebajado con tal de ligar?";
+      pregunta.innerHTML = "¿A que te has rebajado con tal de ligar?.";
       break;
     case 68:
-      pregunta.innerHTML = "¿Te has colado en casa de alguien?";
+      pregunta.innerHTML = "¿Te has colado en casa de alguien?.";
       break;
     case 69:
       pregunta.innerHTML =
-        "¿Cual ha sido la confusion mas graciosa que has tenido en la cama?";
+        "¿Cual ha sido la confusion mas graciosa que has tenido en la cama?.";
       break;
     case 70:
-      pregunta.innerHTML = "¿Cuales son tus preliminares favoritos?";
+      pregunta.innerHTML = "¿Cuales son tus preliminares favoritos?.";
       break;
     case 71:
       pregunta.innerHTML =
-        "¿Que encontraria tu abuela perturbador pero extrañamente encantador?";
+        "¿Que encontraria tu abuela perturbador pero extrañamente encantador?.";
       break;
     case 72:
       pregunta.innerHTML =
-        "¿A que te dedicarias si no te dedicaras a lo que te dedicas?";
+        "¿A que te dedicarias si no te dedicaras a lo que te dedicas?.";
       break;
     case 73:
       pregunta.innerHTML =
-        "¿Que haces con ese regalo que no sabes como se le ha ocurrido regalarte semejante basura?";
+        "¿Que haces con ese regalo que no sabes como se le ha ocurrido regalarte semejante basura?.";
       break;
     case 74:
       pregunta.innerHTML =
-        "¿Cual es el nude/sext que mas verguenza ajena te ha provocado?";
+        "¿Cual es el nude/sext que mas verguenza ajena te ha provocado?.";
       break;
     case 75:
-      pregunta.innerHTML = "¿A quien le has enviado tu ultimo nude?";
+      pregunta.innerHTML = "¿A quien le has enviado tu ultimo nude?.";
       break;
     case 76:
-      pregunta.innerHTML = "¿Que es algo infantil que aun haces?";
+      pregunta.innerHTML = "¿Que es algo infantil que aun haces?.";
       break;
     case 77:
-      pregunta.innerHTML = "¿Cual es la zona donde mas te excitan los besos?";
+      pregunta.innerHTML = "¿Cual es la zona donde mas te excitan los besos?.";
       break;
     case 78:
       pregunta.innerHTML =
-        "¿Cual ha sido el lio mas gordo en el que te has metido?";
+        "¿Cual ha sido el lio mas gordo en el que te has metido?.";
       break;
     case 79:
-      pregunta.innerHTML = "Que es peor: la zoofilia o la necrofilia";
+      pregunta.innerHTML = "Que es peor: la zoofilia o la necrofilia.";
       break;
     case 80:
-      pregunta.innerHTML = "¿Cual es tu tecnica preferida para ligar?";
+      pregunta.innerHTML = "¿Cual es tu tecnica preferida para ligar?.";
       break;
 
     default:
       break;
   }
-  mensajeDeReto.innerHTML = "";
+  mensajeDeReto.innerHTML = ".";
 }
 
 function reto() {
@@ -692,24 +752,24 @@ function reto() {
 
   switch (elreto) {
     case 1:
-      reto.innerHTML = "Haz 10 flexiones";
+      reto.innerHTML = "Haz 10 flexiones.";
       break;
     case 2:
-      reto.innerHTML = "Lee tu ultimo mensaje de whatsapp en voz alta";
+      reto.innerHTML = "Lee tu ultimo mensaje de whatsapp en voz alta.";
       break;
     case 3:
-      reto.innerHTML = "Lame el pie de la persona a tu derecha";
+      reto.innerHTML = "Lame el pie de la persona a tu derecha.";
       break;
     case 4:
-      reto.innerHTML = "Toma este chupito sin las manos";
+      reto.innerHTML = "Toma este chupito sin las manos.";
       break;
     case 4:
       reto.innerHTML =
-        "Desabrocha la bragueta de la persona de tu izquierda mirandol@ fijamente a los ojos. Si te ries tiras de nuevo";
+        "Desabrocha la bragueta de la persona de tu izquierda mirandol@ fijamente a los ojos. Si te ries tiras de nuevo.";
       break;
     case 5:
       reto.innerHTML =
-        "Desde ahora y Hasta nuevo aviso eres el esclavo del jugador de la derecha, si te rajas a la orden. juegas de nuevo";
+        "Desde ahora y Hasta nuevo aviso eres el esclavo del jugador de la derecha, si te rajas a la orden. juegas de nuevo.";
       numeroReto[5] = true;
       break;
     case 6:
@@ -726,19 +786,19 @@ function reto() {
         "Pon un poco de licor en una parte del cuerpo del jugador de la dercha y entonces, bebelo.";
       break;
     case 9:
-      reto.innerHTML = "Haz un calvo al grupo";
+      reto.innerHTML = "Haz un calvo al grupo.";
       break;
     case 10:
       reto.innerHTML =
-        "Hasta nuevo aviso, habla con el acento mas sexy que se te ocurra";
+        "Hasta nuevo aviso, habla con el acento mas sexy que se te ocurra.";
       numeroReto[10] = true;
       break;
     case 11:
-      reto.innerHTML = "Perrea al jugador de tu izquierda durante 30 segundos";
+      reto.innerHTML = "Perrea al jugador de tu izquierda durante 30 segundos.";
       break;
     case 12:
       reto.innerHTML =
-        "Deja al jugador de tu derecha pintarte algo en el cuerpo";
+        "Deja al jugador de tu derecha pintarte algo en el cuerpo.";
       break;
     case 13:
       reto.innerHTML =
@@ -768,10 +828,10 @@ function reto() {
       break;
     case 19:
       reto.innerHTML =
-        "Repite todo lo que diga la persoan de la izquierda durante un turno completo";
+        "Repite todo lo que diga la persoan de la izquierda durante un turno completo.";
       break;
     case 20:
-      reto.innerHTML = "Desde ahora y hasta nuevo aviso solo puedes susurrar";
+      reto.innerHTML = "Desde ahora y hasta nuevo aviso solo puedes susurrar.";
       numeroReto[20] = true;
       break;
     case 21:
@@ -784,15 +844,15 @@ function reto() {
       numeroReto[22] = true;
       break;
     case 23:
-      reto.innerHTML = "Habla como un mono hasta nuevo aviso";
+      reto.innerHTML = "Habla como un mono hasta nuevo aviso.";
       numeroReto[23] = true;
       break;
     case 24:
-      reto.innerHTML = "Haz tres flexiones con un brazo";
+      reto.innerHTML = "Haz tres flexiones con un brazo.";
       break;
     case 25:
       reto.innerHTML =
-        "Huele con ganas el interior del zapato del jugador de tu izquierda";
+        "Huele con ganas el interior del zapato del jugador de tu izquierda.";
       break;
     case 26:
       reto.innerHTML =
@@ -801,7 +861,7 @@ function reto() {
       break;
     case 27:
       reto.innerHTML =
-        "Mira insistentemente al jugador de en frente hasta que te vuelva a tocar. No apartes la mirada";
+        "Mira insistentemente al jugador de en frente hasta que te vuelva a tocar. No apartes la mirada.";
       break;
     case 28:
       reto.innerHTML =
@@ -813,28 +873,28 @@ function reto() {
       numeroReto[29] = true;
       break;
     case 30:
-      reto.innerHTML = "Di algo malo de cada uno de los jugadores presentes";
+      reto.innerHTML = "Di algo malo de cada uno de los jugadores presentes.";
       break;
     case 31:
-      reto.innerHTML = "Di algo bueno de cada uno de los jugadores presentes";
+      reto.innerHTML = "Di algo bueno de cada uno de los jugadores presentes.";
       break;
     case 32:
       reto.innerHTML =
-        "Hasta nuevo aviso cada vez que acabes una frase debes dar un gritito al estilo de Michael Jackson";
+        "Hasta nuevo aviso cada vez que acabes una frase debes dar un gritito al estilo de Michael Jackson.";
       numeroReto[32] = true;
       break;
     case 33:
-      reto.innerHTML = "Mantente en sentadilla hasta que te vuleva a tocar";
+      reto.innerHTML = "Mantente en sentadilla hasta que te vuleva a tocar.";
       break;
     case 34:
-      reto.innerHTML = "No puedes dejar de sonreir hasta nuevo aviso";
+      reto.innerHTML = "No puedes dejar de sonreir hasta nuevo aviso.";
       numeroReto[34] = true;
       break;
     case 35:
-      reto.innerHTML = "Cuenta la el chiste mas ofensivo que sepas";
+      reto.innerHTML = "Cuenta la el chiste mas ofensivo que sepas.";
       break;
     case 36:
-      reto.innerHTML = "pon tu pie detras de tu cabeza";
+      reto.innerHTML = "pon tu pie detras de tu cabeza.";
       break;
     case 37:
       reto.innerHTML = "Hasta nuevio aviso, tapate la nariz.";
@@ -845,136 +905,136 @@ function reto() {
       break;
     case 39:
       reto.innerHTML =
-        "Si tienes gafas quitatelas, si no tienes juegas otra vez";
+        "Si tienes gafas quitatelas, si no tienes juegas otra vez.";
       break;
     case 40:
-      reto.innerHTML = "Deja que el jugador de la derecha te peine,";
+      reto.innerHTML = "Deja que el jugador de la derecha te peine,.";
       break;
     // case 41:
-    // reto.innerHTML="¿Cual ha sido la mentira mas cruel que has contado?";
+    // reto.innerHTML="¿Cual ha sido la mentira mas cruel que has contado?.";
     // break;
     // case 42:
-    // reto.innerHTML="¿Que es lo mas ridiculo que has hecho estando borracho?";
+    // reto.innerHTML="¿Que es lo mas ridiculo que has hecho estando borracho?.";
     // break;
     // case 43:
-    // reto.innerHTML="¿Como fue la ultima vez que te masturbaste?";
+    // reto.innerHTML="¿Como fue la ultima vez que te masturbaste?.";
     // break;
     // case 44:
-    // reto.innerHTML="¿Que es lo mas asqueroso que has tenido en tus manos desnudas?";
+    // reto.innerHTML="¿Que es lo mas asqueroso que has tenido en tus manos desnudas?.";
     // break;
     // case 45:
-    // reto.innerHTML="¿Cual es tu placer culpable?";
+    // reto.innerHTML="¿Cual es tu placer culpable?.";
     // break;
     // case 46:
-    // reto.innerHTML="¿Has puesto alguna vez los cuernos a alguien?";
+    // reto.innerHTML="¿Has puesto alguna vez los cuernos a alguien?.";
     // break;
     // case 47:
-    // reto.innerHTML="¿Como acabo tu anterior relacion?";
+    // reto.innerHTML="¿Como acabo tu anterior relacion?.";
     // break;
     // case 48:
-    // reto.innerHTML="¿Quien te ha visto desnud@ y ojala nunca hubiera sucedido?";
+    // reto.innerHTML="¿Quien te ha visto desnud@ y ojala nunca hubiera sucedido?.";
     // break;
     // case 49:
-    // reto.innerHTML="¿Cual es la mentira mas grande que le has contado a alguno de los presentes?";
+    // reto.innerHTML="¿Cual es la mentira mas grande que le has contado a alguno de los presentes?.";
     // break;
     // case 50:
-    // reto.innerHTML="¿Que ha sido lo mas tonto que te ha hecho llorar?";
+    // reto.innerHTML="¿Que ha sido lo mas tonto que te ha hecho llorar?.";
     // break;
     // case 51:
-    // reto.innerHTML="¿A que personaje de Disney te follabas?";
+    // reto.innerHTML="¿A que personaje de Disney te follabas?.";
     // break;
     // case 52:
-    // reto.innerHTML="¿A quien de los presentes (que nos ea tu pareja) te follabas?";
+    // reto.innerHTML="¿A quien de los presentes (que nos ea tu pareja) te follabas?.";
     // break;
     // case 53:
-    // reto.innerHTML="¿Cual ha sido tu ultima gran decepcion?";
+    // reto.innerHTML="¿Cual ha sido tu ultima gran decepcion?.";
     // break;
     // case 54:
-    // reto.innerHTML="¿Cual ha sido tu ultima gran humillacion?";
+    // reto.innerHTML="¿Cual ha sido tu ultima gran humillacion?.";
     // break;
     // case 55:
-    // reto.innerHTML="¿Con que tema consideras que eres insufrible pero sabes que merece la pena?";
+    // reto.innerHTML="¿Con que tema consideras que eres insufrible pero sabes que merece la pena?.";
     // break;
     // case 56:
-    // reto.innerHTML="¿Que es lo mas importante en la cama?";
+    // reto.innerHTML="¿Que es lo mas importante en la cama?.";
     // break;
     // case 57:
-    // reto.innerHTML="¿Cual es tu postira favorita?";
+    // reto.innerHTML="¿Cual es tu postira favorita?.";
     // break;
     // case 58:
-    // reto.innerHTML="¿Querrias saber como vas a morir?";
+    // reto.innerHTML="¿Querrias saber como vas a morir?.";
     // break;
     // case 59:
-    // reto.innerHTML="¿Cual ha sido al forma mas humillamnte/patetica/original que te han dado calabazas?";
+    // reto.innerHTML="¿Cual ha sido al forma mas humillamnte/patetica/original que te han dado calabazas?.";
     // break;
     // case 60:
-    // reto.innerHTML="¿Cual ha sido al forma mas humillamnte/patetica/original que has dado calabazas?";
+    // reto.innerHTML="¿Cual ha sido al forma mas humillamnte/patetica/original que has dado calabazas?.";
     // break;
     // case 61:
-    // reto.innerHTML="¿Cual es el cotilleo mas loco que has escuchado?";
+    // reto.innerHTML="¿Cual es el cotilleo mas loco que has escuchado?.";
     // break;
     // case 62:
-    // reto.innerHTML="¿cual es tu peor habito?";
+    // reto.innerHTML="¿cual es tu peor habito?.";
     // break;
     // case 63:
-    // reto.innerHTML="¿Cual ha sido la peor excusa que has dado para evitar hacer algo?";
+    // reto.innerHTML="¿Cual ha sido la peor excusa que has dado para evitar hacer algo?.";
     // break;
     // case 64:
-    // reto.innerHTML="¿Cual ha sido la peor excusa que has dado que te dejen hacer algo?";
+    // reto.innerHTML="¿Cual ha sido la peor excusa que has dado que te dejen hacer algo?.";
     // break;
     // case 65:
-    // reto.innerHTML="¿Cual ha sido el beso del que mas te arrepientes?";
+    // reto.innerHTML="¿Cual ha sido el beso del que mas te arrepientes?.";
     // break;
     // case 66:
-    // reto.innerHTML="Si pudieras elegir entre ser la persona mas feliz del mundo o la mas inteligente, ¿Cual eligirias?";
+    // reto.innerHTML="Si pudieras elegir entre ser la persona mas feliz del mundo o la mas inteligente, ¿Cual eligirias?.";
     // break;
     // case 67:
-    // reto.innerHTML="¿A que te has rebajado con tal de ligar?";
+    // reto.innerHTML="¿A que te has rebajado con tal de ligar?.";
     // break;
     // case 68:
-    // reto.innerHTML="¿Te has colado en casa de alguien?";
+    // reto.innerHTML="¿Te has colado en casa de alguien?.";
     // break;
     // case 69:
-    // reto.innerHTML="¿Cual ha sido la confusion mas graciosa que has tenido en la cama?";
+    // reto.innerHTML="¿Cual ha sido la confusion mas graciosa que has tenido en la cama?.";
     // break;
     // case 70:
-    // reto.innerHTML="¿Cuales son tus preliminares favoritos?";
+    // reto.innerHTML="¿Cuales son tus preliminares favoritos?.";
     // break;
     // case 71:
-    // reto.innerHTML="¿Que encontraria tu abuela perturbador pero extrañamente encantador?";
+    // reto.innerHTML="¿Que encontraria tu abuela perturbador pero extrañamente encantador?.";
     // break;
     // case 72:
-    // reto.innerHTML="¿A que te dedicarias si no te dedicaras a lo que te dedicas?";
+    // reto.innerHTML="¿A que te dedicarias si no te dedicaras a lo que te dedicas?.";
     // break;
     // case 73:
-    // reto.innerHTML="¿Que haces con ese regalo que no sabes como se le ha ocurrido regalarte semejante basura?";
+    // reto.innerHTML="¿Que haces con ese regalo que no sabes como se le ha ocurrido regalarte semejante basura?.";
     // break;
     // case 74:
-    // reto.innerHTML="¿Cual es el nude/sext que mas verguenza ajena te ha provocado?";
+    // reto.innerHTML="¿Cual es el nude/sext que mas verguenza ajena te ha provocado?.";
     // break;
     // case 75:
-    // reto.innerHTML="¿A quien le has enviado tu ultimo nude?";
+    // reto.innerHTML="¿A quien le has enviado tu ultimo nude?.";
     // break;
     // case 76:
-    // reto.innerHTML="¿Que es algo infantil que aun haces?";
+    // reto.innerHTML="¿Que es algo infantil que aun haces?.";
     // break;
     // case 77:
-    // reto.innerHTML="¿Cual es la zona donde mas te excitan los besos?";
+    // reto.innerHTML="¿Cual es la zona donde mas te excitan los besos?.";
     // break;
     // case 78:
-    // reto.innerHTML="¿Cual ha sido el lio mas gordo en el que te has metido?";
+    // reto.innerHTML="¿Cual ha sido el lio mas gordo en el que te has metido?.";
     // break;
     // case 79:
-    // reto.innerHTML="Que es peor: la zoofilia o la necrofilia";
+    // reto.innerHTML="Que es peor: la zoofilia o la necrofilia.";
     // break;
     // case 80:
-    // reto.innerHTML="¿Cual es tu tecnica preferida para ligar?";
+    // reto.innerHTML="¿Cual es tu tecnica preferida para ligar?.";
     // break;
 
     default:
       break;
   }
-  mensajeDeReto.innerHTML = "";
+  mensajeDeReto.innerHTML = ".";
 }
 function objetivoCumplido(lugar) {
   switch (lugar) {
@@ -999,4 +1059,128 @@ function objetivoCumplido(lugar) {
 
 function eventoSorpresa(numero) {
   document.getElementById("sorpresa").classList.toggle("d-none");
+
+  console.log(numero);
+
+  switch (Math.floor(numero / 3)) {
+    case 0:
+      document.getElementById("evento").innerHTML =
+        "Todos los jugadores sin gafas juegan un tiro extra. Si tienes lentillas dos mas, por listo.<br>";
+      break;
+    case 1:
+      document.getElementById("evento").innerHTML =
+        "Todos los jugadores con gafas juegan un tiro extra. Si tienes lentillas dos mas, por listo.<br>";
+      break;
+    case 2:
+      document.getElementById("evento").innerHTML =
+        "Pulsa el boton cuando quieras, te toca bebes los chupitos iluminados campeon. Desmarca los chupitos vaciados antes de continuar.<br>";
+      break;
+    case 3:
+      document.getElementById("evento").innerHTML =
+        "Decides si un jugador a tu eleccion juega dos veces en su siguiente turno o no.<br>";
+      break;
+    case 4:
+      document.getElementById("evento").innerHTML =
+        "Has ganado el juego, todos los jugadores restantes brindan a tu salud.<br>";
+      break;
+    case 5:
+      document.getElementById("evento").innerHTML =
+        "Si es tu cumpleaños o lo estas celebrando hoy deja que todos los jugadores te tiren de las orejas.<br>";
+      break;
+    // case 6:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 7:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 8:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 9:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 10:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 11:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 12:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 13:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 14:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+    // case 15:
+    //   document.getElementById("evento").innerHTML=".";
+    //   break;
+
+    default:
+      break;
+  }
 }
+
+function reset(modo) {
+  jugando = false;
+  sepuedepulsar = true;
+  var botontarget = 0;
+  if (modo == 1) {
+    counter = 0;
+  }
+
+  for (let index = 0; index < 16; index++) {
+    socket.emit("light",[index,0]);
+  }
+
+  for (let index = 0; index < 17; index++) {
+    estadosVasos[index] = false;
+  }
+  console.log(estadosVasos);
+  
+  
+  while (botontarget < 16) {
+    botontarget++;
+
+    if (
+      document
+        .getElementById(botontarget)
+        .classList.contains("btn-secondary") &&
+      botontarget % 2 == 0
+    ) {
+      document.getElementById(botontarget).classList.remove("btn-secondary");
+      document.getElementById(botontarget).classList.add("btn-danger");
+    } else if (
+      document
+        .getElementById(botontarget)
+        .classList.contains("btn-secondary") &&
+      botontarget % 2 != 0
+    ) {
+      document.getElementById(botontarget).classList.remove("btn-secondary");
+      document.getElementById(botontarget).classList.add("btn-dark");
+    } else {
+    }
+  }
+  if (!document.getElementById("botones").classList.contains("d-none")) {
+    document.getElementById("botones").classList.add("d-none");
+  }
+
+  if (!document.getElementById("menu").classList.contains("d-none")) {
+    document.getElementById("menu").classList.add("d-none");
+  }
+  if (!document.getElementById("verdad").classList.contains("d-none")) {
+    document.getElementById("verdad").classList.add("d-none");
+  }
+  if (!document.getElementById("reto").classList.contains("d-none")) {
+    document.getElementById("reto").classList.add("d-none");
+  }
+  if (!document.getElementById("gameover").classList.contains("d-none")) {
+    document.getElementById("gameover").classList.add("d-none");
+  }
+  if (!document.getElementById("prep").classList.contains("d-none")) {
+    document.getElementById("prep").classList.add("d-none");
+  }
+}
+
