@@ -2,18 +2,20 @@ var express = require("express");
 var app = express();
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
-var Gpio = require("onoff").Gpio;
-var fs = require("fs"); 
+var Gpio = require("onoff").Gpio; //include onoff to interact with the GPIO
 
+var fs = require("fs"); //require filesystem module
 const path = require("path");
 
 // tema server
 
-app.use("/static", express.static("public"));
+app.use("/static", express.static("public")); //Creacion del directorio static para acceder a recursos como js, css, etc
 
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname + "/public/index.html"));
 });
+
+//Bloque para poder ejecutar comandos por consola, en gran parte para poder mostrar por terminal el hostname -I
 
 function execute(command) {
   const exec = require("child_process").exec;
@@ -47,36 +49,28 @@ const VASO14 = new Gpio(8, "out");
 const VASO15 = new Gpio(25, "out");
 const VASO16 = new Gpio(24, "out");
 
-var vasos = [
-  VASO1,
-  VASO2,
-  VASO3,
-  VASO4,
-  VASO5,
-  VASO6,
-  VASO7,
-  VASO8,
-  VASO9,
-  VASO10,
-  VASO12,
-  VASO13,
-  VASO14,
-  VASO15,
-  VASO16,
-];
+// var vasos = [
+//   VASO1,
+//   VASO2,
+//   VASO3,
+//   VASO4,
+//   VASO5,
+//   VASO6,
+//   VASO7,
+//   VASO8,
+//   VASO9,
+//   VASO10,
+//   VASO12,
+//   VASO13,
+//   VASO14,
+//   VASO15,
+//   VASO16,
+// ];
 
 io.sockets.on("connection", function (socket) {
   // WebSocket Connection
-    if (err) {
-      //if an error
-      console.error("There was an error", err); //output error message to console
-      return;
-    }
-  });
-  socket.on("light", function (data) {
-
-    // vasos[data[0]-1].writeSync(data[1]) esto no se xq no va pero seria la clave
-    
+  
+  socket.on("light", function (data) { //Funcion llamada light, esta funcion se encarga de ir apagando o encendiendo los leds
 
     switch (data[0]) {
       case 1:
@@ -135,9 +129,40 @@ io.sockets.on("connection", function (socket) {
 });
 
 process.on("SIGINT", function () {
-  //on ctrl+c
-  LED.writeSync(0); // Turn LED off
-  LED.unexport(); // Unexport LED GPIO to free resources
-  pushButton.unexport(); // Unexport Button GPIO to free resources
+  //on ctrl+c apagamos y desconectamos los recursos
+  VASO1.writeSync(0);
+  VASO2.writeSync(0);
+  VASO3.writeSync(0);
+  VASO4.writeSync(0);
+  VASO5.writeSync(0);
+  VASO6.writeSync(0);
+  VASO7.writeSync(0);
+  VASO8.writeSync(0);
+  VASO9.writeSync(0);
+  VASO10.writeSync(0);
+  VASO11.writeSync(0);
+  VASO12.writeSync(0);
+  VASO13.writeSync(0);
+  VASO14.writeSync(0);
+  VASO15.writeSync(0);
+  VASO16.writeSync(0);
+
+  VASO1.unexport();
+  VASO2.unexport();
+  VASO3.unexport();
+  VASO4.unexport();
+  VASO5.unexport();
+  VASO6.unexport();
+  VASO7.unexport();
+  VASO8.unexport();
+  VASO9.unexport();
+  VASO10.unexport();
+  VASO11.unexport();
+  VASO12.unexport();
+  VASO13.unexport();
+  VASO14.unexport();
+  VASO15.unexport();
+  VASO16.unexport();
+
   process.exit(); //exit completely
 });
