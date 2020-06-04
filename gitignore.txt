@@ -1,0 +1,2 @@
+comando a ejecutar en inici
+.vscode

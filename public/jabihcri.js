@@ -1,9 +1,8 @@
+
 var estadosVasos = [];
 for (let index = 0; index < 16; index++) {
   estadosVasos[index] = false;
 }
-
-console.log(estadosVasos.length);
 
 
 var jugando = false;
@@ -116,11 +115,9 @@ function vaso(numeroVaso) {
     // do some stuff
   } else if (sepuedepulsar) {
 
+    //Se manda al init.js que vaso debe apagarse a continuacion
     socket.emit("light",[numeroVaso,0]);
-
     estadosVasos[numeroVaso-1]=true;
-    console.log(estadosVasos);
-    // socket.emit("light", estadosVasos);
 
     var vaso = document.getElementById(numeroVaso);
     vaso.classList.remove("btn-dark");
