@@ -1,4 +1,4 @@
-
+//Inicializamso el control de las luces (logica positiva)
 var estadosVasos = [];
 for (let index = 0; index < 16; index++) {
   estadosVasos[index] = false;
@@ -9,20 +9,18 @@ var jugando = false;
 var numeroselect = document.getElementById("numeroliq");
 var counter = 0;
 var sepuedepulsar = true;
+//inicializamos los contadores de turno para los retos
 var retoTimer = [];
 for (let index = 0; index < 40; index++) {
   retoTimer[index] = 0;
 }
-console.log(retoTimer);
-
+//inicializamos el control de si un reto esta activo o no
 var numeroReto = [];
 for (let index = 0; index < 40; index++) {
   numeroReto[index] = false;
 }
-console.log(numeroReto);
 
 var mensajeDeReto = document.getElementById("retoOutcome");
-
 var socket = io(); //load socket.io-client and connect to the host that serves the page
 
 function init() {
@@ -37,6 +35,7 @@ function init() {
 }
 
 function actualizarNumero() {
+  //Funcion que se centra en la generacion de contenido de los vasos, dado un numero de entrada te dice que tipo de licor poner en que vaso
   var cantidadlicor = numeroselect.options[numeroselect.selectedIndex].value;
   var b1;
   var b2;
@@ -101,7 +100,7 @@ function prepdone() {
   document.getElementById("prep").classList.toggle("d-none");
   document.getElementById("botones").classList.toggle("d-none");
 
-  for (let index = 0; index < 17; index++) {
+  for (let index = 0; index < 17; index++) { // Las luces se encienden
     socket.emit("light",[index,1]);
   }
 }
@@ -109,8 +108,6 @@ function prepdone() {
 function vaso(numeroVaso) {
   var eventosorpresa = Math.floor(Math.random() * 100);
   
-  
-
   if (document.getElementById(numeroVaso).classList.contains("btn-secondary")) {
     // do some stuff
   } else if (sepuedepulsar) {
@@ -119,6 +116,7 @@ function vaso(numeroVaso) {
     socket.emit("light",[numeroVaso,0]);
     estadosVasos[numeroVaso-1]=true;
 
+    //actualizacion grafica del boton del vaso
     var vaso = document.getElementById(numeroVaso);
     vaso.classList.remove("btn-dark");
     vaso.classList.remove("btn-danger");
@@ -126,11 +124,14 @@ function vaso(numeroVaso) {
     counter++;
     document.getElementById("counter").innerHTML = counter;
 
+    //Trigger del evento sorpresa
     if (eventosorpresa < 15) {
       eventoSorpresa(eventosorpresa);
     } else {
       document.getElementById("menu").classList.toggle("d-none");
     }
+
+    //Resultado de los retos:
 
     if (numeroReto[5] == true) {
       if (retoTimer[5] > 6) {
@@ -1114,6 +1115,9 @@ function eventoSorpresa(numero) {
 }
 
 function reset(modo) {
+
+  //vuelta al punto de partida, tiene dos modalidades, el full reset == 1 resetea hasta las rondas, el soft reset !=1 mantiene las rondas
+
   jugando = false;
   sepuedepulsar = true;
   var botontarget = 0;
@@ -1153,6 +1157,9 @@ function reset(modo) {
     } else {
     }
   }
+
+  //Vuelta al estado de init
+
   if (!document.getElementById("botones").classList.contains("d-none")) {
     document.getElementById("botones").classList.add("d-none");
   }
@@ -1171,6 +1178,12 @@ function reset(modo) {
   }
   if (!document.getElementById("prep").classList.contains("d-none")) {
     document.getElementById("prep").classList.add("d-none");
+  }
+  if (!document.getElementById("sorpresa").classList.contains("d-none")) {
+    document.getElementById("sorpresa").classList.add("d-none");
+  }
+  if (!document.getElementById("elBoton").classList.contains("d-none")) {
+    document.getElementById("elBoton").classList.add("d-none");
   }
 }
 
