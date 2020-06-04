@@ -24,14 +24,7 @@ console.log(numeroReto);
 
 var mensajeDeReto = document.getElementById("retoOutcome");
 
-
-
-/// LOGICA GPIO
-
 var socket = io(); //load socket.io-client and connect to the host that serves the page
-
-////// JUEGO EN SI
-
 
 function init() {
   if (jugando == false) {
@@ -1073,7 +1066,7 @@ function eventoSorpresa(numero) {
       break;
     case 2:
       document.getElementById("evento").innerHTML =
-        "Pulsa el boton cuando quieras, te toca bebes los chupitos iluminados campeon. Desmarca los chupitos vaciados antes de continuar.<br>";
+        "De ahora en adelante todos deben llamarte \"su majestad\" o beberan un chupito extra por cada vez que no lo digan.<br>";
       break;
     case 3:
       document.getElementById("evento").innerHTML =
