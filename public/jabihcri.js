@@ -111,7 +111,8 @@ function vaso(numeroVaso) {
   if (document.getElementById(numeroVaso).classList.contains("btn-secondary")) {
     // do some stuff
   } else if (sepuedepulsar) {
-
+    
+    sepuedepulsar = false;
     //Se manda al init.js que vaso debe apagarse a continuacion
     socket.emit("light",[numeroVaso,0]);
     estadosVasos[numeroVaso-1]=true;
@@ -261,11 +262,12 @@ function vaso(numeroVaso) {
         retoTimer[37]++;
       }
     }
-    sepuedepulsar = false;
+    
   }
 }
 
 function elBoton() {
+  sepuedepulsar = false;
   document.getElementById("menu").classList.toggle("d-none");
   document.getElementById("elBoton").classList.toggle("d-none");
   switch (Math.floor(Math.random() * 40)) {
@@ -433,12 +435,11 @@ function elBoton() {
     default:
       break;
   }
-
-  sepuedepulsar = true;
-  mensajeDeReto.innerHTML = ".";
+  mensajeDeReto.innerHTML = "";
 }
 
 function verdad() {
+  sepuedepulsar = false;
   document.getElementById("menu").classList.toggle("d-none");
   document.getElementById("verdad").classList.toggle("d-none");
   var pregunta = document.getElementById("lapregunta");
@@ -732,10 +733,12 @@ function verdad() {
     default:
       break;
   }
-  mensajeDeReto.innerHTML = ".";
+  mensajeDeReto.innerHTML = "";
+  
 }
 
 function reto() {
+  sepuedepulsar = false;
   document.getElementById("menu").classList.toggle("d-none");
   document.getElementById("reto").classList.toggle("d-none");
   var reto = document.getElementById("elreto");
@@ -1025,7 +1028,7 @@ function reto() {
     default:
       break;
   }
-  mensajeDeReto.innerHTML = ".";
+  mensajeDeReto.innerHTML = "";
 }
 function objetivoCumplido(lugar) {
   switch (lugar) {
@@ -1112,6 +1115,7 @@ function eventoSorpresa(numero) {
     default:
       break;
   }
+  sepuedepulsar = false;
 }
 
 function reset(modo) {

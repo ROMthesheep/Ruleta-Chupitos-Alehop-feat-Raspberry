@@ -27,3 +27,13 @@
   font-size: 20px; 
   text-align: center; 
 } 
+.jumbotron {
+  background-color: rgba(0, 68, 255, 0.322) !important;
+  background-image: url("oveja\ outline.png");
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  background-size: 25%;
+}
+* {
+font-family: 'Montserrat', sans-serif;
+}
